@@ -1,0 +1,110 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "edwarp"
+dynamic = ["version"]
+description = "Python-only static file (js, css) bundler core library"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [
+  { name = "Robin van der Noord", email = "robin.vdn@educationwarehouse.nl" },
+  { name = "Remco Boerma", email = "remco.b@educationwarehouse.nl" }
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+]
+
+
+dependencies = [
+  "tomlkit",
+  "python-dotenv",
+  "sassquatch>=1.0.1",
+  "rjsmin",
+  "quickjs-ng",
+  "requests",
+  "pyyaml",
+  "configuraptor>=1.28.0",
+  "expandvars<2",
+  "termcolor"
+]
+
+[project.optional-dependencies]
+dev = [
+    "hatch",
+    "python-semantic-release < 8",
+    # "black",
+    "pytest",
+]
+
+[project.urls]
+Documentation = "https://github.com/educationwarehouse/edwarp#readme"
+Issues = "https://github.com/educationwarehouse/edwarp/issues"
+Source = "https://github.com/educationwarehouse/edwarp"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/edwarp"]
+
+[tool.hatch.version]
+path = "src/edwarp/__about__.py"
+
+[tool.semantic_release]
+branch = "master"
+version_variable = "src/edwarp/__about__.py:__version__"
+change_log = "CHANGELOG.md"
+upload_to_repository = false
+upload_to_release = false
+build_command = "hatch build"
+version_source = "tag"
+
+parser_angular_minor_types = "feat,minor"
+parser_angular_patch_types = "fix,perf,refactor,build,chore,patch"
+
+
+[tool.black]
+target-version = ["py312"]
+line-length = 120
+skip-string-normalization = false
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "F", # pyflake error
+    "E", # pycodestyle error
+    "W", # pycodestyle warning
+    "Q", # quotes
+    "A", # builtins
+    # "C4", # comprehensions - NO: doesn't allow dict()
+    # "RET", # return - NO: annoying
+    "SIM", # simplify
+    "ARG", # unused arguments
+    # "COM", # comma's - NO: annoying
+    # "PTH", # use pathlib - NO: annoying
+    "RUF", # ruff rules
+]
+unfixable = [
+    # Don't touch unused imports
+    "F401",
+]
+
+ignore = [
+    "RUF013" # implicit Optional
+]
+
+[tool.isort]
+profile = "black"
+extend_skip_glob = ["*.bak/*"]

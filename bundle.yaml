@@ -1,0 +1,32 @@
+js:
+  # - https://unpkg.com/htmx.org@1.9.2/dist/htmx.min.js
+  - $src/example.ts
+  - $src/main2.ts
+css:
+  # - https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css
+  - |
+    // sass
+    .success
+      color: $base-color
+  - file: |
+      // scss
+      
+      .alert {
+        color: $base-color;
+        border: 1px solid $border-color;
+      }
+    variables:
+      border-color: rgba($base-color, 0.88)
+  - $src/example.sass
+
+config:
+  minify: 1
+  filename: bundled
+  src: example_src
+  output-css: static/css/$filename-$version.css
+  output_js: static/js/$filename-$version.js
+  hash: 1
+  scss-variables:
+    - $src/variables.toml
+    - ${SCHEMA:-https}://${HOSTINGDOMAIN}/api/styles.json?secret=${AUTH_TOKEN}
+
