@@ -59,16 +59,28 @@ function __transpile(input) {
     });
     return result.outputText;
 }
+
+function __transpile_force_module(input) {
+    var result = ts.transpileModule(input, {
+        compilerOptions: {
+            target: ts.ScriptTarget.%s,
+            module: ts.ModuleKind.System,
+            moduleDetection: ts.ModuleDetectionKind.Force
+        }
+    });
+    return result.outputText;
+}
 """
-        % TS_TARGET
+        % (TS_TARGET, TS_TARGET)
     )
     return ctx
 
 
-def transpile_typescript(typescript_code: str) -> str:
+def transpile_typescript(typescript_code: str, force_module: bool = False) -> str:
     ctx = _build_typescript_context()
     source = json.dumps(typescript_code)
-    return ctx.eval(f"__transpile({source})")
+    function_name = "__transpile_force_module" if force_module else "__transpile"
+    return ctx.eval(f"{function_name}({source})")
 
 
 def find_dependencies(ts_compiled: str) -> list[str]:
@@ -97,7 +109,7 @@ def extract_contents_typescript(_path: str | Path, settings: dict, name: Optiona
     path = Path(_path)
     typescript_code = extract_contents_local(path)
 
-    js_code = transpile_typescript(typescript_code)
+    js_code = transpile_typescript(typescript_code, force_module=True)
 
     dependencies = find_dependencies(js_code)
     # System.register([deps] ...
@@ -162,7 +174,8 @@ def extract_contents_for_js(file: str, settings: dict, cache=True, minify=True, 
         contents = file
     else:
         raise NotImplementedError(
-            f"File type of {file} could not be identified. If you want to add inline code, add a comment at the top of the block."
+            f"File type of {file} could not be identified. "
+            f"If you want to add inline code, add a comment at the top of the block."
         )
 
     file = file.split("?")[0]

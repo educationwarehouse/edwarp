@@ -33,3 +33,36 @@ def test_extract_contents_for_js_accepts_typescript_file(tmp_path):
 
     assert "System.register('__main__'" in output
     assert 'exports_1("v", v = 1);' in output
+
+
+def test_extract_contents_for_js_accepts_browser_globals_in_typescript(tmp_path):
+    path = tmp_path / "entry.ts"
+    variants = [
+        # with export:
+        """
+        export function free_fn() {}
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const root = window.document.body;
+            const readyState = document.readyState;
+            root?.setAttribute("data-ready-state", readyState);
+        });
+        """,
+        # without export:
+        """
+        document.addEventListener("DOMContentLoaded", () => {
+            const root = window.document.body;
+            const readyState = document.readyState;
+            root?.setAttribute("data-ready-state", readyState);
+        });
+        """,
+    ]
+
+    for ts_code in variants:
+        path.write_text(ts_code)
+        output = extract_contents_for_js(str(path), settings={}, minify=False)
+
+        assert "System.register('__main__'" in output
+        assert "document.addEventListener" in output
+        assert "window.document.body" in output
+        assert "document.readyState" in output
