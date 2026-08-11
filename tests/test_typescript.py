@@ -19,7 +19,8 @@ def test_extract_contents_typescript_resolves_dependencies(tmp_path):
 
     output = extract_contents_typescript(main, {})
 
-    assert "const System = {" in output
+    assert "__namespace__" not in output
+    assert "var System = {" in output
     assert "System.register('./shared'," in output
     assert "System.register('__main__'," in output
     assert "./shared" in output

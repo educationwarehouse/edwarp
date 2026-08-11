@@ -1,7 +1,6 @@
-let __namespace__;
-
-
-const System = {
+// This must stay `var`: every TypeScript bundle includes this loader, and
+// classic scripts may redeclare a top-level `var` but not `let` or `const`.
+var System = {
     __dependencies__: {},
 
     register(namespace, lst, callback) {
