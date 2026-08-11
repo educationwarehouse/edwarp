@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v0.2.0 (2026-08-11)
+
+### Fix
+* update ts loader so you can have multiple instances on one webpage
+
 ## v0.1.0 (2026-04-21)
 
 ### Feature
